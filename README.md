@@ -1,6 +1,13 @@
 # ResumeIQ
 
-An ATS resume analyzer and career optimization platform that uses deterministic scoring algorithms and grounded AI feedback to help candidates tailor their resumes for specific job descriptions.
+AI-powered resume analysis and ATS optimization using structured resume parsing, deterministic matching, and evidence-grounded recommendations.
+
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-API-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
@@ -23,140 +30,174 @@ Manage parsed resumes, inspect structured skills and experience roles, and launc
 
 ---
 
-## Why I Built This
+## Overview
 
-Most existing resume checkers fall into one of two traps:
+```text
+Resume
++
+Target Job Description
+        ↓
+Document extraction
+        ↓
+Structured resume parsing
+        ↓
+Job requirement extraction
+        ↓
+Skill and keyword matching
+        ↓
+Deterministic ATS scoring
+        ↓
+Evidence-grounded AI analysis
+        ↓
+Actionable recommendations
+```
 
-1. **Simple Keyword Counters**: They do a basic `string.includes()` search over the resume text. They miss real aliases (e.g., treating `ReactJS` and `React` as different things) and produce false positives (e.g., detecting the programming language `C` inside words like `React` or `Agile`).
-2. **Pure Generative AI Tools**: They pass the whole resume and job description to an LLM and ask for an "ATS score out of 100". Because LLMs are probabilistic, running the same resume twice gives different scores, and the AI often hallucinates skills or metrics that the candidate never had.
+ResumeIQ evaluates candidate resumes against target job postings by separating quantitative evaluation from qualitative guidance:
 
-**ResumeIQ solves this by keeping mathematical scoring completely separate from generative suggestions:**
-
-- **The Scoring Engine is 100% Deterministic**: Every number is calculated using explicit mathematical rubrics, alias dictionaries, and regex word-boundary guards. Two identical runs always yield the exact same score.
-- **The AI Layer is Qualitative Only**: Google Gemini is used solely for bullet rewrites, professional summary drafting, and evidence-grounded action items. It is strictly constrained by prompt rules requiring verbatim citations from the resume, and it falls back to local heuristic rules if no API key is provided or quotas are reached.
+1. **Deterministic Backend Scoring**: The numerical match score (0–100) is calculated entirely by rule-based algorithms in the backend. It uses explicit category weights, canonical skill aliases, and word-boundary regex guards. The score never fluctuates between identical runs.
+2. **Qualitative AI Guidance**: Google Gemini is used exclusively for narrative feedback, professional summary optimization, and bullet rewrites using the Google X-Y-Z format (`Accomplished [X], as measured by [Y], by doing [Z]`). Recommendations must cite exact excerpts from the resume, and local heuristic fallbacks engage automatically if the API key is missing or quotas are exceeded.
 
 ---
 
 ## Features
 
-- **Resume Ingestion (PDF & DOCX)**: Upload and parse `.pdf` and `.docx` resumes in memory without writing uploaded files to disk.
-- **Canonical Skill Taxonomy**: Internal dictionary of 200+ technical skills with alias normalization (`React.js` / `ReactJS` $\to$ `React`, `K8s` $\to$ `Kubernetes`, `Postgres` $\to$ `PostgreSQL`).
-- **Collision-Safe Skill Matching**: Regular expressions with negative lookaheads and word boundaries prevent short skill tokens (`C`, `R`, `Go`, `Java`) from falsely matching inside standard English words or longer framework names.
-- **Deterministic ATS Scoring (0–100)**: Transparent weighted score broken down across 6 categories:
-  - Skills Match (30%) — weighted between required (75%) and preferred (25%) qualifications
-  - Domain Keywords (20%) — coverage and frequency of domain terms
-  - Experience Alignment (20%) — years of experience ratio combined with bullet quality
-  - Project Relevance (15%) — alignment of technical projects with target tools
-  - Resume Quality (10%) — action verb strength, quantified outcomes, and layout consistency
-  - Education Fit (5%) — degree and field alignment (candidates are not penalized if a degree is optional)
-- **Independent Resume Health Diagnostic**: Craftsmanship audit that scores document structure, metric density, and action verbs independently of any specific job description.
-- **Evidence-Grounded Bullet Rewriter**: Rephrases weak bullet points using the Google X-Y-Z formula (`Accomplished [X], as measured by [Y], by doing [Z]`) without inventing imaginary numbers or experiences.
-- **Role-Targeted Summary Optimizer**: Rewrites the professional summary to align with target role requirements using verified candidate skills.
-- **Side-by-Side Resume Comparison**: Compare two versions of a resume against the same job posting to determine which version offers better technical coverage.
-- **Multi-Resume & Target Job Management**: Save multiple resumes and target jobs in your workspace to run iterative evaluations.
-- **Downloadable PDF Reports**: Export complete analysis reports via server-side `PDFKit` streaming, or use browser-native print stylesheets.
-- **Dark & Light Mode**: Clean, accessible UI with system theme detection and manual toggle.
+### Resume Processing
+- **PDF & DOCX Upload**: In-memory document stream extraction using `unpdf`, `pdf-parse`, `pdf2json`, and `mammoth` (5MB upload limit).
+- **Text Normalization**: Strips non-printable characters, normalizes line breaks, and standardizes bullet markers.
+- **Section Detection**: Heuristic header detection identifies Summary, Skills, Experience, Education, Projects, and Certifications.
+- **Structured Parsing**: Groups experience entries (title, company, dates, bullet points), academic history (degree, field, school), and contact links (email, phone, LinkedIn, GitHub).
 
----
+### Job Analysis
+- **Requirement Parsing**: Extracts required skills, preferred qualifications, and minimum years of experience from job descriptions.
+- **Keyword Extraction**: Identifies industry-specific technical terms, methodologies, and architectural tools.
 
-## How the Scoring Engine Works
+### Matching Engine
+- **Canonical Normalization**: Resolves aliases into canonical forms (`React.js` $\to$ `React`, `Postgres` $\to$ `PostgreSQL`).
+- **Collision Prevention**: Regex word boundaries and lookarounds ensure short tokens (`C`, `Go`, `Java`) do not match inside English words or unrelated tools.
+- **Weighted Match Logic**: Evaluates required vs. preferred criteria (required skills carry 75% of the skill score weight; preferred carry 25%).
 
-The overall ATS Match Score is a weighted calculation across six distinct dimensions:
+### Scoring Engine
+- **Deterministic 6-Pillar Score**: Transparent 0–100 score composed of Skills (30%), Keywords (20%), Experience (20%), Projects (15%), Quality (10%), and Education (5%).
+- **Independent Resume Health Diagnostic**: Evaluates action-verb impact, quantified outcome density, and structural integrity independently of any job posting.
 
-```
-Overall Score = (Skills × 0.30) + (Keywords × 0.20) + (Experience × 0.20)
-              + (Projects × 0.15) + (Quality × 0.10) + (Education × 0.05)
-```
+### AI Advisory Layer
+- **Evidence-Grounded Recommendations**: Every recommendation quotes a verbatim excerpt from the resume.
+- **Bullet Rewriter**: Reformulates weak bullet points into outcome-driven statements using the Google X-Y-Z framework.
+- **Metric-Safe Placeholders**: Inserts bracketed placeholders (`[improved performance by X%]`) instead of fabricating imaginary metrics.
+- **Summary Optimizer**: Tailors professional summaries to target roles using verified candidate achievements.
 
-```
-                        Resume Document (PDF/DOCX)
-                                    │
-                                    ▼
-                         Text Extraction Engine
-                       (unpdf, pdf-parse, mammoth)
-                                    │
-                                    ▼
-                      Section Normalization & Regex
-                    (Contact, Skills, Work, Projects)
-                                    │
-    Target Job Description          │
-               │                    ▼
-               └────────► Deterministic Scoring Engine
-                          ├─ Skills Match (30%)
-                          ├─ Keyword Coverage (20%)
-                          ├─ Experience Match (20%)
-                          ├─ Project Alignment (15%)
-                          ├─ Craftsmanship Quality (10%)
-                          └─ Education Fit (5%)
-                                    │
-                                    ▼
-                      Independent Resume Health Score
-                        (Verb strength, metric counts)
-                                    │
-                                    ▼
-                      Grounded Qualitative Advice
-                   (Gemini API with heuristic fallbacks)
-                                    │
-                                    ▼
-                      Interactive Results Dashboard
-```
-
-### Why LLMs Do Not Calculate Scores
-1. **Reproducibility**: If a candidate makes no changes to their resume, their score should not fluctuate.
-2. **Explainability**: Candidates can inspect the exact formula, matched required skills, missing preferred skills, and keyword coverage.
-3. **No Metric Hallucination**: AI models are prone to making up scores or rewarding arbitrary phrasing. Keeping scoring in pure code prevents this.
-
----
-
-## Tech Stack
-
-### Frontend
-- **React 18**: Component-driven architecture using functional components and hooks.
-- **Vite 6**: Fast development build tool and asset bundler.
-- **Tailwind CSS 3**: Utility-first styling with full dark/light theme support.
-- **Lucide React**: Clean SVG icon library.
-- **Recharts**: Responsive score trend charts and radar diagrams.
-- **React Router 6**: Client-side routing with protected route middleware.
-- **Axios**: HTTP client configured with centralized response and error interceptors.
-
-### Backend & Core Services
-- **Node.js & Express 4**: RESTful API architecture.
-- **MongoDB & Mongoose 8**: Document persistence for users, resumes, jobs, and evaluations.
-- **mongodb-memory-server**: Automatically starts an in-memory database during local development if no external MongoDB URI is provided.
-- **@google/generative-ai**: Google Gemini API SDK (`gemini-1.5-flash`) for qualitative analysis.
-- **unpdf, pdf-parse & pdf2json**: Multi-layer PDF text stream extraction.
-- **mammoth**: DOCX text and structure extraction.
-- **PDFKit**: Programmatic server-side generation of downloadable PDF evaluation reports.
-- **jsonwebtoken & bcryptjs**: Secure password hashing and token-based authentication via HTTP-only cookies.
-- **Helmet & CORS**: HTTP security headers and configurable CORS protection.
-- **express-rate-limit**: Route protection against brute-force and request bursts.
+### Product Features
+- **Session Authentication**: JWT-based session management using secure `httpOnly` cookies with Bearer token fallback.
+- **Workspace Dashboard**: Recent analyses, average match score, health diagnostic, and resume library overview.
+- **Side-by-Side Comparison**: Compare two resume versions against the same job description.
+- **PDF Report Generation**: Downloadable server-rendered PDF analysis reports generated with `PDFKit`.
+- **Theme Support**: Built-in Dark and Light themes with persistent preference storage.
 
 ---
 
 ## Architecture
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                    Client (React 18 / Vite)                │
-│  Pages • Components • Theme & Auth Contexts • Axios Client │
-└─────────────────────────────┬──────────────────────────────┘
-                              │ HTTP / REST (JSON + Cookies)
-                              ▼
-┌────────────────────────────────────────────────────────────┐
-│                 Backend Server (Node.js / Express)         │
-│  Middleware: Helmet • CORS • CookieParser • RateLimiter    │
-├─────────────────────────────┬──────────────────────────────┤
-│     Deterministic Services  │      External & Persistence  │
-│  • Section Normalizer       │  • Google Gemini Generative  │
-│  • Skill Taxonomy Engine    │    AI (with local fallback)  │
-│  • 6-Category ATS Scorers   │  • PDFKit Report Generator   │
-│  • Quality & Health Check   │  • MongoDB / Memory Server   │
-└─────────────────────────────┴──────────────────────────────┘
+```mermaid
+flowchart TD
+    A[Resume PDF / DOCX] --> B[Document Extraction]
+    B --> C[Text Normalization]
+    C --> D[Structured Resume Parser]
+
+    E[Target Job Description] --> F[Job Requirement Parser]
+
+    D --> G[Matching Engine]
+    F --> G
+
+    G --> H[Deterministic Scoring Engine]
+    H --> I[Score Breakdown]
+
+    D --> J[AI Analysis]
+    F --> J
+    I --> J
+
+    J --> K[Validated Recommendations]
+
+    I --> L[Analysis Dashboard]
+    K --> L
 ```
 
-The application is structured cleanly into two decoupled layers:
-- `client/`: Single-page React application that interacts with `/api/*` endpoints.
-- `server/`: Stateless REST API running on Express. When an analysis is requested, the scoring pipeline runs synchronously in code, while Gemini adds qualitative bullet suggestions.
+The application is structured into two decoupled components:
+- **Client (React 18 / Vite)**: Handles user interaction, responsive visualizations (`Recharts`), modal dialogs, and authenticated routing.
+- **Server (Node.js / Express)**: Orchestrates in-memory document parsing, regex normalization, deterministic scoring rubrics, database operations (`Mongoose`), and Gemini API requests.
+
+---
+
+## Scoring Model
+
+The overall ATS Match Score (0–100) is calculated using explicit mathematical weights:
+
+| Category | Weight | What It Measures |
+| :--- | :---: | :--- |
+| **Skills Match** | **30%** | Evaluates candidate skills against job requirements. Required skills represent 75% of the skill score; preferred skills represent 25%. |
+| **Keyword Match** | **20%** | Measures frequency and coverage ratio of domain-specific terminology, frameworks, and tools in the resume body. |
+| **Experience Match** | **20%** | Compares years of experience against role requirements (up to 70 points) and evaluates bullet point action verbs (up to 30 points). |
+| **Project Match** | **15%** | Evaluates the alignment of candidate projects with target technologies and modern engineering complexity. |
+| **Resume Quality** | **10%** | Measures document craftsmanship, action-verb strength, quantified outcome density, and structural layout completeness. |
+| **Education Match** | **5%** | Assesses degree level and field of study alignment. Candidates are not penalized if a degree is not required by the job. |
+
+> The match score is an internal resume-to-job relevance measure. It is not a prediction of interview selection or hiring outcome.
+
+---
+
+## AI Responsibility & Guardrails
+
+> ResumeIQ does not delegate the numeric score to the language model. The backend calculates the score from structured matching results. Gemini is used for qualitative analysis, explanations, bullet improvements, summary improvements, and recommendations.
+
+### Guardrails Implemented:
+1. **Verbatim Evidence**: Recommendations must quote exact text from the candidate's resume to prevent fabricated claims.
+2. **Zero Metric Invention**: When suggesting improvements, Gemini is prompted to insert bracketed placeholders (e.g., `[reduced latency by X% / Y ms]`) for candidate metrics rather than inventing numbers.
+3. **Local Heuristic Fallbacks**: If the `GEMINI_API_KEY` is omitted, or if an API quota is exhausted, built-in rule engines supply structured advice and bullet suggestions without breaking the application flow.
+
+---
+
+## Skill Normalization & Collision Prevention
+
+### Canonical Skill Normalization
+Different candidates and job postings write the same technology in different ways. The skill taxonomy normalizes these variations into canonical identifiers:
+
+```text
+ReactJS
+React.js  ────►  React
+React JS
+
+Node
+NodeJS    ────►  Node.js
+Node.js
+
+K8s       ────►  Kubernetes
+Postgres  ────►  PostgreSQL
+```
+
+### Collision-Safe Boundary Matching
+Simple substring searching causes frequent false positives. ResumeIQ uses word-boundary regular expressions and negative lookaheads:
+
+```text
+Java        ≠   JavaScript      (word boundary isolates 'Java')
+C           ≠   C++ / C#        (lookahead isolates 'C' from 'C++' and 'C#')
+Go          ≠   Good / Google   (isolated token matching prevents sub-word matches)
+Agile       ≠   Fragile         (word boundaries prevent substring matches)
+```
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, Vite 6, React Router 6, Axios, Recharts, Lucide React |
+| **Styling** | Tailwind CSS 3 |
+| **Backend** | Node.js, Express 4, Mongoose 8, jsonwebtoken, bcryptjs, cookie-parser, Helmet, CORS, express-rate-limit |
+| **Database** | MongoDB (with `mongodb-memory-server` automatic fallback for local development) |
+| **Document Parsing** | `unpdf`, `pdf-parse`, `pdf2json`, `mammoth` |
+| **Reporting** | `pdfkit` |
+| **AI Integration** | `@google/generative-ai` (Google Gemini API: `gemini-1.5-flash`) with rule-based fallback |
+| **Testing** | Node.js Test Runner / Custom assertion framework (`tests/run-tests.js`) |
+| **Containerization** | Docker, Docker Compose |
 
 ---
 
@@ -172,121 +213,101 @@ ResumeIq/
 │   │   │   ├── common/         # ScoreRing, ProgressBar, Badge, Navbar, Sidebar
 │   │   │   └── resume/         # ResumeUploader, ResumeCompareModal
 │   │   ├── context/
-│   │   │   ├── AuthContext.jsx # User authentication & profile session
-│   │   │   └── ThemeContext.jsx# Dark / light theme provider
+│   │   │   ├── AuthContext.jsx # Authentication session & token management
+│   │   │   └── ThemeContext.jsx# Dark/light theme state
 │   │   ├── layouts/
-│   │   │   └── AppLayout.jsx   # Main authenticated dashboard shell
+│   │   │   └── AppLayout.jsx   # Authenticated dashboard layout shell
 │   │   ├── pages/
-│   │   │   ├── Analysis.jsx    # Complete ATS score results & breakdowns
+│   │   │   ├── Analysis.jsx    # Complete ATS evaluation report view
 │   │   │   ├── Analyze.jsx     # Analysis runner (select resume & job)
-│   │   │   ├── Dashboard.jsx   # Metrics, score history chart, quick actions
-│   │   │   ├── History.jsx     # Past analysis records with search & filters
+│   │   │   ├── Dashboard.jsx   # Metrics, score chart, recent evaluations
+│   │   │   ├── History.jsx     # Analysis history with search & filters
 │   │   │   ├── Jobs.jsx        # Target job descriptions manager
-│   │   │   ├── Landing.jsx     # Public landing page with live preview
-│   │   │   ├── Login.jsx       # Unified Sign In & Create Account interface
-│   │   │   ├── Profile.jsx     # Candidate target role & profile preferences
-│   │   │   ├── Register.jsx    # User registration wrapper
-│   │   │   ├── ResumeDetails.jsx # Parsed resume section inspector
+│   │   │   ├── Landing.jsx     # Public landing page
+│   │   │   ├── Login.jsx       # Tabbed Sign In & Create Account view
+│   │   │   ├── Profile.jsx     # Candidate target role & profile settings
+│   │   │   ├── Register.jsx    # Registration route wrapper
+│   │   │   ├── ResumeDetails.jsx # Structured resume section inspector
 │   │   │   ├── Resumes.jsx     # Resume library & document uploader
-│   │   │   └── Settings.jsx    # Custom scoring weights & Gemini key setup
+│   │   │   └── Settings.jsx    # Scoring weights & personal Gemini key configuration
 │   │   ├── services/
-│   │   │   └── api.js          # Configured Axios instance with error handling
-│   │   ├── App.jsx             # Route definitions
-│   │   └── main.jsx            # React root mount point
+│   │   │   └── api.js          # Axios client with interceptors
+│   │   ├── App.jsx             # Client route definitions
+│   │   └── main.jsx            # React root mount
 │   ├── package.json
 │   └── vite.config.js
 │
 ├── server/
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── db.js           # MongoDB connection with in-memory fallback
+│   │   │   └── db.js           # MongoDB connection & in-memory fallback
 │   │   ├── controllers/        # auth, user, resume, job, analysis, ai controllers
 │   │   ├── middleware/         # auth (JWT), upload (Multer), rateLimit, errorHandler
-│   │   ├── models/             # User, Resume, Job, Analysis Mongoose models
+│   │   ├── models/             # User, Resume, Job, Analysis schemas
 │   │   ├── prompts/            # Google X-Y-Z bullet rewrites & analysis prompts
 │   │   ├── routes/             # REST endpoint routers (/api/*)
 │   │   ├── services/
-│   │   │   ├── ai/             # AIProvider (Gemini + rule-based heuristic fallbacks)
-│   │   │   ├── job/            # Job description criteria extractor
+│   │   │   ├── ai/             # AIProvider (Gemini + rule-based heuristic engine)
+│   │   │   ├── job/            # Job criteria parser
 │   │   │   ├── report/         # PDFKit report generator
-│   │   │   ├── resume/         # Multi-engine PDF/DOCX parsers & normalizer
-│   │   │   └── scoring/        # Deterministic scorers for skills, keywords, etc.
+│   │   │   ├── resume/         # PDF/DOCX extractors & resume normalizer
+│   │   │   └── scoring/        # Deterministic scoring rubrics
 │   │   ├── utils/              # 200+ canonical skill dictionary & text cleaner
-│   │   └── server.js           # Express application entry point
+│   │   └── server.js           # Express app bootstrap
 │   ├── tests/
 │   │   ├── deepFix.test.js     # Skill collision & explanation benchmarks
-│   │   ├── integration.test.js # Full end-to-end pipeline test
+│   │   ├── integration.test.js # End-to-end user pipeline test
 │   │   ├── normalizer.test.js  # Section segmentation unit tests
 │   │   ├── run-tests.js        # Test runner
-│   │   └── scoring.test.js     # Mathematical scoring unit tests
+│   │   └── scoring.test.js     # Deterministic scoring unit tests
 │   └── package.json
 │
 ├── screenshots/                # Application preview images
-├── docker-compose.yml          # Container configuration
-├── .env.example                # Sample environment configuration
-├── package.json                # Root helper scripts
+├── docker-compose.yml          # Multi-container Docker configuration
+├── .env.example                # Sample environment variables
+├── package.json                # Root development scripts
+├── LICENSE                     # MIT License
 └── README.md
 ```
 
 ---
 
-## Getting Started
+## Installation & Setup
 
 ### Prerequisites
-
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher
-- *(Optional)* A running MongoDB instance. If no database URI is supplied, the application automatically launches an in-memory MongoDB server for local development.
+- **Node.js**: `v18.0.0` or higher
+- **npm**: `v9.0.0` or higher
+- *(Optional)* A running MongoDB instance. If no URI is provided, the backend automatically starts an in-memory database (`mongodb-memory-server`).
+- *(Optional)* A Google Gemini API key. If omitted, the platform uses local heuristic rule engines.
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/resumeiq.git
-cd resumeiq
+git clone https://github.com/VinayKrishna-7/ResumeIQ.git
+cd ResumeIQ
 ```
 
 ### 2. Configure Environment Variables
 
-Copy the sample environment file to create your backend configuration:
+Create the backend configuration file from the example:
 
 ```bash
 cp .env.example server/.env
 ```
 
-Open `server/.env` and configure your settings:
-
-```env
-NODE_ENV=development
-PORT=5000
-
-# Leave blank to use auto-started in-memory MongoDB in development
-MONGODB_URI=
-
-# Secret used to sign authentication JWTs (change to a random secure string)
-JWT_SECRET=your_jwt_secret_key_here_at_least_32_characters
-
-# URL of the client application for CORS
-CLIENT_URL=http://localhost:5173
-
-# Optional: Google Gemini API key for qualitative advice
-# If left blank, the app will use local heuristic rule engines
-GEMINI_API_KEY=
-AI_MODEL=gemini-1.5-flash
-```
-
 ### 3. Install Dependencies
 
-Install dependencies for the root workspace, backend, and frontend:
+Install dependencies for root, server, and client:
 
 ```bash
-# Install root packages
+# Root packages
 npm install
 
-# Install server dependencies
+# Server dependencies
 cd server
 npm install
 
-# Install client dependencies
+# Client dependencies
 cd ../client
 npm install
 cd ..
@@ -294,96 +315,134 @@ cd ..
 
 ### 4. Run Development Servers
 
-You can start both servers using separate terminals or using the root scripts:
+Start the backend and frontend in separate terminals:
 
 ```bash
-# Terminal 1 - Start the backend server (runs on http://localhost:5000)
+# Terminal 1 - Start the Backend API (runs on http://localhost:5000)
 cd server
 npm run dev
 
-# Terminal 2 - Start the frontend client (runs on http://localhost:5173)
+# Terminal 2 - Start the Frontend Client (runs on http://localhost:5173)
 cd client
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser. You can create a new account via the **Create Account** tab and immediately start uploading resumes and analyzing jobs.
+Open `http://localhost:5173` in your browser. You can create an account using the **Create Account** tab and immediately start uploading resumes.
 
 ---
 
 ## Environment Variables
 
+Configure the following variables in `server/.env`:
+
 | Variable | Required | Default | Description |
-|---|:---:|:---:|---|
+| :--- | :---: | :---: | :--- |
 | `PORT` | No | `5000` | Port for the Express server to listen on |
-| `NODE_ENV` | No | `development` | Environment mode (`development` or `production`) |
-| `MONGODB_URI` | No | `""` *(auto in-memory)* | MongoDB connection string. When left empty, `mongodb-memory-server` boots automatically |
-| `JWT_SECRET` | **Yes** | — | Cryptographic secret key used to sign session cookies |
-| `CLIENT_URL` | No | `http://localhost:5173` | Allowed frontend origin for CORS requests |
-| `GEMINI_API_KEY` | No | `""` | Google Gemini API key for qualitative recommendations. Uses local rule fallbacks if omitted |
-| `AI_MODEL` | No | `gemini-1.5-flash` | Gemini model variant used for qualitative analysis |
+| `NODE_ENV` | No | `development` | Runtime environment (`development` or `production`) |
+| `MONGODB_URI` | No | `""` *(auto in-memory)* | MongoDB connection string. Leave blank to use auto-started in-memory MongoDB |
+| `JWT_SECRET` | **Yes** | — | Cryptographic secret key used to sign session tokens |
+| `CLIENT_URL` | No | `http://localhost:5173` | Allowed CORS origin for client requests |
+| `GEMINI_API_KEY` | No | `""` | Google Gemini API key. Uses rule-based heuristic fallbacks if omitted |
+| `AI_MODEL` | No | `gemini-1.5-flash` | Gemini model variant used for qualitative advice |
+
+---
+
+## Database Configuration
+
+- **Development Fallback**: In development, if `MONGODB_URI` is left empty, `server/src/config/db.js` launches an ephemeral in-memory database (`mongodb-memory-server`). This allows running the project locally without installing or configuring MongoDB.
+- **Production**: Set `MONGODB_URI` to a persistent MongoDB URI (e.g. MongoDB Atlas connection string or local MongoDB daemon `mongodb://localhost:27017/resumeiq`).
 
 ---
 
 ## API Overview
 
-All API endpoints are prefixed with `/api`. Protected routes require a valid session JWT passed via an `httpOnly` cookie or an `Authorization: Bearer <token>` header.
+All routes are prefixed with `/api`. Protected routes require a valid session JWT passed via an `httpOnly` cookie or an `Authorization: Bearer <token>` header.
 
-### Authentication
-- `POST /api/auth/register` — Create a new candidate account.
-- `POST /api/auth/login` — Authenticate credentials and issue session cookie.
-- `POST /api/auth/logout` — Invalidate session and clear auth cookie.
-- `GET /api/auth/me` — Return currently authenticated user profile.
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user account and set session cookie |
+| `POST` | `/api/auth/login` | Authenticate credentials and issue session cookie |
+| `POST` | `/api/auth/logout` | Invalidate session and clear session cookie |
+| `GET` | `/api/auth/me` | Return currently authenticated user profile |
 
-### Resumes
-- `POST /api/resumes` — Upload and parse a new resume document (PDF or DOCX).
-- `GET /api/resumes` — List all resumes owned by the authenticated user.
-- `GET /api/resumes/:id` — Retrieve structured extracted data for a resume.
-- `GET /api/resumes/:id/debug` — View raw extracted text and section mapping.
-- `PATCH /api/resumes/:id` — Update resume name or override parsed fields.
-- `DELETE /api/resumes/:id` — Delete a resume document and its parsed records.
+### Resumes (`/api/resumes`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/resumes` | Upload and parse a new resume document (PDF or DOCX) |
+| `GET` | `/api/resumes` | List all resumes belonging to the authenticated user |
+| `GET` | `/api/resumes/:id` | Retrieve parsed resume structure (skills, experience, education) |
+| `GET` | `/api/resumes/:id/debug` | View raw extracted text and section mapping |
+| `DELETE` | `/api/resumes/:id` | Delete a resume and its associated data |
 
-### Target Jobs
-- `POST /api/jobs` — Parse and save a target job description.
-- `GET /api/jobs` — List saved target job descriptions.
-- `GET /api/jobs/:id` — Retrieve parsed criteria (required/preferred skills, keywords, experience).
-- `PATCH /api/jobs/:id` — Update job description or extracted requirements.
-- `DELETE /api/jobs/:id` — Delete a target job posting.
+### Target Jobs (`/api/jobs`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/jobs` | Parse and save a new target job description |
+| `GET` | `/api/jobs` | List saved target job descriptions |
+| `GET` | `/api/jobs/:id` | Retrieve parsed job criteria (required/preferred skills, keywords) |
+| `DELETE` | `/api/jobs/:id` | Delete a saved job description |
 
-### Analyses & Reports
-- `POST /api/analyses` — Run deterministic scoring and qualitative AI analysis on a resume-job pair.
-- `GET /api/analyses` — List past evaluations with pagination and filters.
-- `GET /api/analyses/:id` — Retrieve full analysis report, category breakdowns, and recommendations.
-- `DELETE /api/analyses/:id` — Delete a saved analysis record.
-- `POST /api/analyses/compare` — Compare two resume versions side-by-side against one job posting.
-- `GET /api/analyses/:id/report` — Stream a downloadable server-generated PDF report.
+### Analyses & Reports (`/api/analyses`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/analyses` | Execute deterministic scoring and qualitative AI analysis on a resume-job pair |
+| `GET` | `/api/analyses` | List past evaluations with pagination and filters |
+| `GET` | `/api/analyses/:id` | Retrieve complete evaluation report, category breakdowns, and recommendations |
+| `DELETE` | `/api/analyses/:id` | Delete a saved evaluation record |
+| `POST` | `/api/analyses/compare` | Evaluate two resume versions side-by-side against a single job description |
+| `GET` | `/api/analyses/:id/report` | Stream a downloadable PDF report generated with PDFKit |
 
-### AI Enhancements
-- `POST /api/ai/improve-bullet` — Rewrite an experience bullet using the Google X-Y-Z framework.
-- `POST /api/ai/improve-summary` — Optimize a professional summary tailored to a target role.
+### AI Enhancements (`/api/ai`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/ai/improve-bullet` | Rewrite an experience bullet point using the Google X-Y-Z framework |
+| `POST` | `/api/ai/improve-summary` | Optimize a professional summary tailored to a target role |
 
-### System Health
-- `GET /api/health` — Returns system uptime and API status.
+### Health Check
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Returns server health status, uptime, and database connectivity |
 
 ---
 
 ## Testing
 
-ResumeIQ includes automated unit, benchmark, and end-to-end integration tests.
+The backend includes an automated test suite verifying normalization, scoring accuracy, collision prevention, and the end-to-end pipeline.
 
 ### Running Tests
 
-Execute the full test suite from the `server` directory:
+Execute the complete test suite from the `server` directory:
 
 ```bash
 cd server
 npm test
 ```
 
-### What the Tests Verify:
-1. **`normalizer.test.js`**: Checks that the canonical skill dictionary resolves aliases properly and verifies that section segmentation regex correctly extracts Contact, Experience, Skills, Education, and Projects.
-2. **`scoring.test.js`**: Mathematically validates the deterministic scoring rubrics and weighting formulas across required vs. preferred criteria.
-3. **`deepFix.test.js`**: Confirms that false-positive substring collisions (`C`, `Go`, `Java`) are prevented, verifies parser confidence calculations, and tests Google X-Y-Z bullet rewrites.
-4. **`integration.test.js`**: Boots an in-memory MongoDB database, creates a test user, uploads a resume, creates a job, runs the full analysis pipeline, verifies document persistence, and cleans up.
+### Test Coverage Summary:
+- **`normalizer.test.js`**: Verifies alias normalization in the canonical skill dictionary and tests multi-section regex segmentation against varied resume layouts.
+- **`scoring.test.js`**: Validates the mathematical scoring rubrics, required vs. preferred skill weighting, and edge cases (missing sections, zero experience).
+- **`deepFix.test.js`**: Tests collision prevention (`C`, `Go`, `Java`), confidence score calculations, data-driven explanation generation, and Google X-Y-Z bullet rewrites.
+- **`integration.test.js`**: Launches an in-memory MongoDB instance, creates a test user, uploads a resume, creates a job, runs the full analysis pipeline, verifies document persistence, and cleans up.
+
+---
+
+## Limitations
+
+- **Scanned Image-Only PDFs**: Text extraction reads embedded text streams. Scanned PDFs containing only raster images without an embedded text layer cannot be parsed without OCR.
+- **Section Heading Conventions**: The normalizer relies on standard English heading keywords (e.g., *Experience*, *Work History*, *Education*, *Technical Skills*). Non-standard headings may be grouped into unclassified text.
+- **Skill Taxonomy Scope**: Skill detection relies on the maintained canonical dictionary (200+ technologies). Niche or newly released libraries may require dictionary additions.
+- **AI Rate Limits**: Free-tier Gemini API keys may encounter 429 rate limits under heavy burst traffic; in such cases, the system engages built-in rule-based heuristic fallbacks.
+- **Score Meaning**: The ATS Match Score measures textual and technical alignment against job requirements; it is not a guarantee of an interview or hiring outcome.
+
+---
+
+## Future Improvements
+
+- **OCR Extraction Fallback**: Integrate client/server OCR (e.g. Tesseract) to support scanned, image-only PDF resumes.
+- **Semantic Skill Embeddings**: Augment canonical keyword matching with vector embeddings to match related conceptual qualifications.
+- **Multi-Language Taxonomies**: Expand the skill taxonomy and section detector to support resumes in languages other than English.
+- **ATS Template Export**: Enable direct export of optimized resume content into standardized, ATS-friendly Word (`.docx`) or LaTeX templates.
 
 ---
 
