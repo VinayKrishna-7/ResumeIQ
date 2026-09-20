@@ -37,10 +37,6 @@ Inspect deterministic score rings, 6-dimension breakdowns (Skills, Keywords, Exp
 
 ![ATS Analysis Report](screenshots/analysis-report.png)
 
-### 3. Resume Management Library
-Manage parsed resumes, inspect structured skills and experience roles, and launch new job analyses.
-
-![Resume Management Library](screenshots/resumes-manager.png)
 
 ---
 
@@ -111,29 +107,7 @@ ResumeIQ evaluates candidate resumes against target job postings by separating q
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A[Resume PDF / DOCX] --> B[Document Extraction]
-    B --> C[Text Normalization]
-    C --> D[Structured Resume Parser]
 
-    E[Target Job Description] --> F[Job Requirement Parser]
-
-    D --> G[Matching Engine]
-    F --> G
-
-    G --> H[Deterministic Scoring Engine]
-    H --> I[Score Breakdown]
-
-    D --> J[AI Analysis]
-    F --> J
-    I --> J
-
-    J --> K[Validated Recommendations]
-
-    I --> L[Analysis Dashboard]
-    K --> L
-```
 
 The application is structured into two decoupled components:
 - **Client (React 18 / Vite)**: Handles user interaction, responsive visualizations (`Recharts`), modal dialogs, and authenticated routing.
@@ -345,21 +319,6 @@ Open `http://localhost:5173` in your browser. You can create an account using th
 
 ---
 
-## Environment Variables
-
-Configure the following variables in `server/.env`:
-
-| Variable | Required | Default | Description |
-| :--- | :---: | :---: | :--- |
-| `PORT` | No | `5000` | Port for the Express server to listen on |
-| `NODE_ENV` | No | `development` | Runtime environment (`development` or `production`) |
-| `MONGODB_URI` | No | `""` *(auto in-memory)* | MongoDB connection string. Leave blank to use auto-started in-memory MongoDB |
-| `JWT_SECRET` | **Yes** | — | Cryptographic secret key used to sign session tokens |
-| `CLIENT_URL` | No | `http://localhost:5173` | Allowed CORS origin for client requests |
-| `GEMINI_API_KEY` | No | `""` | Google Gemini API key. Uses rule-based heuristic fallbacks if omitted |
-| `AI_MODEL` | No | `gemini-1.5-flash` | Gemini model variant used for qualitative advice |
-
----
 
 ## Database Configuration
 
@@ -367,51 +326,6 @@ Configure the following variables in `server/.env`:
 - **Production**: Set `MONGODB_URI` to a persistent MongoDB URI (e.g. MongoDB Atlas connection string or local MongoDB daemon `mongodb://localhost:27017/resumeiq`).
 
 ---
-
-## API Overview
-
-All routes are prefixed with `/api`. Protected routes require a valid session JWT passed via an `httpOnly` cookie or an `Authorization: Bearer <token>` header.
-
-### Authentication (`/api/auth`)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Register a new user account and set session cookie |
-| `POST` | `/api/auth/login` | Authenticate credentials and issue session cookie |
-| `POST` | `/api/auth/logout` | Invalidate session and clear session cookie |
-| `GET` | `/api/auth/me` | Return currently authenticated user profile |
-
-### Resumes (`/api/resumes`)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/resumes` | Upload and parse a new resume document (PDF or DOCX) |
-| `GET` | `/api/resumes` | List all resumes belonging to the authenticated user |
-| `GET` | `/api/resumes/:id` | Retrieve parsed resume structure (skills, experience, education) |
-| `GET` | `/api/resumes/:id/debug` | View raw extracted text and section mapping |
-| `DELETE` | `/api/resumes/:id` | Delete a resume and its associated data |
-
-### Target Jobs (`/api/jobs`)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/jobs` | Parse and save a new target job description |
-| `GET` | `/api/jobs` | List saved target job descriptions |
-| `GET` | `/api/jobs/:id` | Retrieve parsed job criteria (required/preferred skills, keywords) |
-| `DELETE` | `/api/jobs/:id` | Delete a saved job description |
-
-### Analyses & Reports (`/api/analyses`)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/analyses` | Execute deterministic scoring and qualitative AI analysis on a resume-job pair |
-| `GET` | `/api/analyses` | List past evaluations with pagination and filters |
-| `GET` | `/api/analyses/:id` | Retrieve complete evaluation report, category breakdowns, and recommendations |
-| `DELETE` | `/api/analyses/:id` | Delete a saved evaluation record |
-| `POST` | `/api/analyses/compare` | Evaluate two resume versions side-by-side against a single job description |
-| `GET` | `/api/analyses/:id/report` | Stream a downloadable PDF report generated with PDFKit |
-
-### AI Enhancements (`/api/ai`)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/ai/improve-bullet` | Rewrite an experience bullet point using the Google X-Y-Z framework |
-| `POST` | `/api/ai/improve-summary` | Optimize a professional summary tailored to a target role |
 
 ### Health Check
 | Method | Endpoint | Description |
