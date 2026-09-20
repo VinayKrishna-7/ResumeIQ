@@ -8,6 +8,15 @@ const api = axios.create({
   }
 });
 
+// Request interceptor to attach Bearer token if present in localStorage
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('resumeiq_token');
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Response interceptor to normalize errors
 api.interceptors.response.use(
   (response) => response,

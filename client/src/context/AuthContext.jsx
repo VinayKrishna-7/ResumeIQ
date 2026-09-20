@@ -11,6 +11,11 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       setLoading(true);
+      const urlParams = new URLSearchParams(window.location.search);
+      const previewToken = urlParams.get('previewToken');
+      if (previewToken) {
+        localStorage.setItem('resumeiq_token', previewToken);
+      }
       const res = await api.get('/auth/me');
       if (res.data.success) {
         setUser(res.data.data.user);
@@ -31,6 +36,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
+        if (res.data.data?.token) {
+          localStorage.setItem('resumeiq_token', res.data.data.token);
+        }
         setUser(res.data.data.user);
         return { success: true };
       }
@@ -50,6 +58,9 @@ export const AuthProvider = ({ children }) => {
         confirmPassword
       });
       if (res.data.success) {
+        if (res.data.data?.token) {
+          localStorage.setItem('resumeiq_token', res.data.data.token);
+        }
         setUser(res.data.data.user);
         return { success: true };
       }
@@ -61,6 +72,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      localStorage.removeItem('resumeiq_token');
       await api.post('/auth/logout');
     } catch (err) {
       console.error('Logout error:', err);

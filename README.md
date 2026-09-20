@@ -6,14 +6,20 @@ An ATS resume analyzer and career optimization platform that uses deterministic 
 
 ## Screenshots
 
-### Analysis & Scoring Dashboard Preview
-![ResumeIQ Analysis Dashboard Preview](screenshots/dashboard-preview.png)
+### 1. Workspace Dashboard
+Track resume performance, recent evaluations, ATS match rates, and document health diagnostics.
 
-### Authentication (Sign In & Create Account)
-<p align="center">
-  <img src="screenshots/login-page.png" alt="Sign In View" width="48%" />
-  <img src="screenshots/register-page.png" alt="Create Account View" width="48%" />
-</p>
+![Workspace Dashboard](screenshots/dashboard.png)
+
+### 2. Comprehensive ATS Analysis & Score Breakdown
+Inspect deterministic score rings, 6-dimension breakdowns (Skills, Keywords, Experience, Projects, Quality, Education), strengths, and targeted gaps.
+
+![ATS Analysis Report](screenshots/analysis-report.png)
+
+### 3. Resume Management Library
+Manage parsed resumes, inspect structured skills and experience roles, and launch new job analyses.
+
+![Resume Management Library](screenshots/resumes-manager.png)
 
 ---
 
