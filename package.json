@@ -1,0 +1,10 @@
+{
+  "name": "resumeiq",
+  "version": "1.0.0",
+  "description": "ResumeIQ - AI Resume Analyzer",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "test": "npm --prefix server test"
+  }
+}
