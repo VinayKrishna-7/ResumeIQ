@@ -1,13 +1,29 @@
-# ResumeIQ
+<h1 align="center">✨ ResumeIQ — AI Resume Analyzer & ATS Optimization</h1>
 
-AI-powered resume analysis and ATS optimization using structured resume parsing, deterministic matching, and evidence-grounded recommendations.
+<p align="center">
+  <i>“Understand how your resume matches the role — and exactly what to improve.”</i>
+</p>
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-API-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/MongoDB-6.x-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Mongoose-8.x-880000?style=for-the-badge&logo=mongoose&logoColor=white" alt="Mongoose" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Google_Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini" />
+  <img src="https://img.shields.io/badge/Recharts-2.x-22B5BF?style=for-the-badge&logo=recharts&logoColor=white" alt="Recharts" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" />
+</p>
+
+<p align="center">
+  ResumeIQ is a full-stack resume analysis platform that compares resumes against target job descriptions using structured parsing, deterministic ATS scoring, skill normalization, and evidence-grounded AI recommendations.
+</p>
+
+<p align="center">
+  <b>PDF / DOCX → Structured Resume → Job Matching → ATS Score → AI Recommendations</b>
+</p>
 
 ---
 
