@@ -21,9 +21,7 @@
   ResumeIQ is a full-stack resume analysis platform that compares resumes against target job descriptions using structured parsing, deterministic ATS scoring, skill normalization, and evidence-grounded AI recommendations.
 </p>
 
-<p align="center">
-  <b>PDF / DOCX → Structured Resume → Job Matching → ATS Score → AI Recommendations</b>
-</p>
+
 
 ---
 
