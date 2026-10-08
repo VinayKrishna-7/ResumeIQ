@@ -2,8 +2,6 @@
 
 A web application that analyzes resumes against job descriptions, calculates ATS compatibility scores, and highlights missing skills with actionable suggestions to improve your resume.
 
-![Preview](screenshots/dashboard.png)
-
 ## Features
 
 - **Resume Parsing**: Upload resumes in PDF or DOCX format.
