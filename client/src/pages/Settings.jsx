@@ -90,7 +90,7 @@ const Settings = () => {
           <span>AI Model Configuration (Optional)</span>
         </h2>
         <p className="mt-1 text-xs text-slate-500 dark:text-[#94A3B8]">
-          The server includes fallback heuristic AI and server-side keys. You may optionally supply your personal Google Gemini API key to route analysis through your own quota.
+          The application includes built-in advisory models. You can optionally connect a personal Google Gemini API key to run evaluations through your own account.
         </p>
 
         <form onSubmit={handleSaveKey} className="mt-4 space-y-3">

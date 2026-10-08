@@ -63,7 +63,7 @@ const SummaryImproverModal = ({
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#243044]">
           <div className="flex items-center gap-2 text-indigo-600 dark:text-[#818CF8] font-bold font-display text-base">
             <Sparkles className="h-5 w-5" />
-            <span>AI Professional Summary Optimizer</span>
+            <span>Professional Summary Optimizer</span>
           </div>
           <button
             onClick={onClose}

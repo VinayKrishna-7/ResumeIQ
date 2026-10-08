@@ -8,9 +8,9 @@ function assert(condition, message) {
   }
 }
 
-console.log('--- Running Deterministic Scoring Test (Section 60) ---');
+console.log('--- Running Skill Scorer Benchmark Test ---');
 
-// Benchmark data specified in Section 60:
+// Benchmark reference dataset:
 // Resume: React, Node.js, MongoDB
 // Job: React, Node.js, MongoDB, AWS, Docker
 const resumeSkills = ['React', 'Node.js', 'MongoDB'];
@@ -32,7 +32,7 @@ assert(result.missing.includes('AWS'), 'Missing should include AWS');
 assert(result.missing.includes('Docker'), 'Missing should include Docker');
 assert(result.score === 60, `Expected score 60, got ${result.score}`);
 
-console.log('✅ Section 60 Skill Scorer benchmark verified perfectly!');
+console.log('✅ Skill Scorer benchmark verified successfully!');
 
 console.log('--- Testing Overall ATS-Style Scoring Engine ---');
 

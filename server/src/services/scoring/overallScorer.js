@@ -53,13 +53,13 @@ const calculateEducationScore = (educationEntries = [], jobEducationRequirements
 };
 
 /**
- * Deterministic Engine Orchestrator
- * Computes all numeric scores without external LLM dependencies.
+ * ATS Scoring Engine
+ * Computes calibrated numeric scores across all dimensions.
  *
  * @param {object} resume - Resume model document
  * @param {object} job - Job model document
  * @param {object} customWeights - Optional overrides for weights
- * @returns {object} Deterministic scoring package
+ * @returns {object} Calculated scoring package
  */
 const runDeterministicScoring = (resume, job, customWeights = {}) => {
   const weights = { ...DEFAULT_WEIGHTS, ...customWeights };

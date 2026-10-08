@@ -1,6 +1,5 @@
 /**
- * Prompt for AI Bullet Point Rewriter.
- * Strictly adheres to Section 26 and Section 70 anti-fabrication rules.
+ * Formats and enhances resume bullets using Action + Context + Outcome framework.
  */
 
 const buildBulletImprovementPrompt = (originalBullet, roleContext = '', userMetric = '') => {

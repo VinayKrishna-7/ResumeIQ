@@ -70,7 +70,7 @@ const createAnalysis = async (req, res, next) => {
         await job.save();
       }
     } else if (targetJobDescription && targetJobDescription.trim().length > 0) {
-      // Auto-save pasted job description (Section 16)
+      // Auto-save pasted job description
       const title = targetJobTitle?.trim() || 'Target Role';
       const company = targetJobCompany?.trim() || '';
       const parsedData = parseJobDescription(targetJobDescription);
@@ -248,7 +248,7 @@ const deleteAnalysis = async (req, res, next) => {
   }
 };
 
-// @desc    Compare two resume versions against one job (Section 41)
+// @desc    Compare two resume versions against one job
 // @route   POST /api/analyses/compare
 // @access  Private
 const compareResumes = async (req, res, next) => {
@@ -360,7 +360,7 @@ const downloadReport = async (req, res, next) => {
   }
 };
 
-// @desc    Seed Demo data for instant exploration (Section 64 & 65)
+// @desc    Seed demo data for sandbox exploration
 // @route   POST /api/analyses/seed-demo
 // @access  Public
 const seedDemoData = async (req, res, next) => {

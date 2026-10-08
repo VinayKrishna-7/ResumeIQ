@@ -1,110 +1,113 @@
-<div align="center">
+# ResumeIQ
 
-# ✨ ResumeIQ
+A full-stack resume analysis and ATS optimization platform. ResumeIQ evaluates candidate resumes against target job descriptions, calculates transparent compatibility scores across multiple dimensions, and provides actionable recommendations to improve resume impact.
 
-**AI-Powered Resume Analyzer & ATS Optimization Platform**
-
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Express](https://img.shields.io/badge/Express-4-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com)
-[![MongoDB](https://img.shields.io/badge/MongoDB-In--Memory%20Fallback-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com)
-[![Gemini](https://img.shields.io/badge/Google%20Gemini-AI%20Advisory-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-
-<br />
-
-ResumeIQ evaluates candidate resumes against target job descriptions using structured parsing, canonical skill normalization, deterministic 6-dimension ATS scoring, and evidence-grounded AI recommendations.
-
-[Features](#-key-features) • [Preview](#-preview) • [Scoring Rubric](#-deterministic-scoring-model) • [Getting Started](#-getting-started) • [Tech Stack](#-tech-stack)
-
-</div>
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=flat-square&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.21-000000?style=flat-square&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)
 
 ---
 
-## 📸 Preview
+## Preview
 
-<div align="center">
-
-| Workspace Dashboard | ATS Evaluation Report |
+| Dashboard & Upload | Analysis & Scoring Report |
 | :---: | :---: |
 | ![Dashboard](screenshots/dashboard.png) | ![Analysis Report](screenshots/analysis-report.png) |
 
-</div>
+---
+
+## Overview
+
+Most online ATS checkers rely either on simplistic keyword counting or opaque generative models that hallucinate metrics. ResumeIQ combines rule-based parsing and deterministic evaluation with contextual recommendations:
+
+- **Multi-Format Extraction**: Parses PDF and DOCX files directly into structured sections (Summary, Experience, Education, Skills, Projects, and Contact Details).
+- **Skill Taxonomy & Normalization**: Maps 200+ technical skill variations to canonical standards (e.g. `React.js` → `React`, `K8s` → `Kubernetes`) with boundary guards to eliminate false positives.
+- **Calibrated Scoring Engine**: Scores resume compatibility on a reproducible 0–100 scale across 6 transparent dimensions.
+- **Actionable Bullet Improvements**: Suggests quantifiable, Google-style *Action + Context + Impact* rewrites using verified metrics from candidate experience.
+- **Resume Version Comparison**: Compare two resume versions side-by-side against the same target role to track measurable improvements.
+- **PDF Report Generation**: Exports comprehensive audit reports with detailed score breakdowns and recommendations.
 
 ---
 
-## ⚡ Key Features
+## Scoring Rubric
 
-- **Multi-Format Extraction**: Parses PDF and DOCX files in-memory using multi-strategy text extraction with automatic fallback for corrupted XRefs.
-- **Structured Resume Normalizer**: Automatically groups experience, education, skills, contact links, and projects into structured JSON.
-- **Canonical Skill Taxonomy**: Maps 200+ industry skill variants to canonical standards (`React.js` → `React`, `K8s` → `Kubernetes`) with regex word-boundary isolation against false positives.
-- **Deterministic ATS Scoring**: Rule-based, reproducible 0–100 matching engine across 6 calibrated dimensions.
-- **Evidence-Grounded AI Guidance**: Google Gemini delivers qualitative feedback and bullet rewrites using Google's X-Y-Z framework (`Accomplished [X] measured by [Y] by doing [Z]`) with local heuristic fallbacks when offline.
-- **Resume Library & Comparison**: Compare different resume iterations side-by-side against the same target role.
-- **Server-Rendered PDF Export**: Generates clean, downloadable PDF audit reports.
-- **Zero-Setup Local Dev**: In-memory MongoDB starts automatically when no external database connection string is provided.
+Match scores are calculated using a weighted multi-factor rubric:
 
----
-
-## 🎯 Deterministic Scoring Model
-
-Numerical match scores are calculated strictly via backend algorithms to ensure 100% reproducibility:
-
-| Dimension | Weight | Criteria Measured |
+| Dimension | Weight | Description |
 | :--- | :---: | :--- |
-| **Skills Match** | **30%** | Compares required skills (75% weight) and preferred skills (25% weight). |
-| **Keyword Match** | **20%** | Measures technical domain term density and vocabulary alignment. |
-| **Experience Match** | **20%** | Evaluates years of experience against seniority requirements and action verbs. |
-| **Project Match** | **15%** | Analyzes alignment of candidate projects with target tech stacks. |
-| **Resume Quality** | **10%** | Audits document craftsmanship, quantifiable outcomes, and structure. |
-| **Education Match** | **5%** | Evaluates degree level and field of study relevance. |
+| **Skills Match** | **30%** | Evaluates required skills (80% weight) and preferred skills (20% weight). |
+| **Keywords Coverage** | **20%** | Measures technical domain vocabulary alignment and keyword density. |
+| **Experience Alignment** | **20%** | Evaluates duration, role relevance, and action-verb quality in experience bullets. |
+| **Project Relevance** | **15%** | Evaluates tech stack alignment, architectural depth, and project outcomes. |
+| **Resume Quality** | **10%** | Evaluates document structure, readability, and presence of contact info. |
+| **Education Match** | **5%** | Evaluates degree level and field of study relevance against role requirements. |
 
 ---
 
-## 🚀 Getting Started
+## Tech Stack
+
+- **Frontend**: React 18, Vite 6, Tailwind CSS 3, Lucide Icons, Recharts
+- **Backend**: Node.js, Express 4, Mongoose 8, JWT, Helmet, CORS
+- **Document Parsing**: `pdf-parse`, `pdf2json`, `unpdf`, `mammoth`
+- **PDF Generation**: PDFKit
+- **Database**: MongoDB (supports both local/cloud MongoDB and zero-setup in-memory database for development)
+
+---
+
+## Getting Started
 
 ### Prerequisites
 - **Node.js**: `v18.0.0` or higher
 - **npm**: `v9.0.0` or higher
 
-### 1. Clone & Configure
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/VinayKrishna-7/ResumeIQ.git
 cd ResumeIQ
+```
+
+### 2. Configure Environment Variables
+Copy the sample environment file in the `server` directory:
+```bash
 cp .env.example server/.env
 ```
 
-> **Note**: An in-memory database starts automatically in development. An external `MONGODB_URI` and `GEMINI_API_KEY` are optional.
+> **Note**: An in-memory database is automatically initialized in development if `MONGODB_URI` is left blank. Supplying a `GEMINI_API_KEY` is optional (built-in evaluators provide fallback recommendations).
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 ```bash
-# Server dependencies
-cd server && npm install
+# Install backend dependencies
+cd server
+npm install
 
-# Client dependencies
-cd ../client && npm install
+# Install frontend dependencies
+cd ../client
+npm install
 cd ..
 ```
 
-### 3. Run Application
-Start backend and frontend in separate terminals:
+### 4. Run the Development Servers
+Start the backend and frontend in separate terminals:
 
 ```bash
-# Terminal 1 - Backend API (http://localhost:5000)
-cd server && npm run dev
+# Terminal 1 — Backend API (http://localhost:5000)
+cd server
+npm run dev
 
-# Terminal 2 - Frontend Client (http://localhost:5173)
-cd client && npm run dev
+# Terminal 2 — Frontend Client (http://localhost:5173)
+cd client
+npm run dev
 ```
 
-Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+Visit **[http://localhost:5173](http://localhost:5173)** in your browser.
 
 ---
 
-## 🧪 Testing
+## Testing
 
-Execute the automated test suite covering unit normalizers, collision guards, scoring rubrics, and end-to-end integration:
+Run the automated test suite covering unit normalizers, collision guards, scoring rubrics, and integration workflows:
 
 ```bash
 cd server
@@ -113,16 +116,39 @@ npm test
 
 ---
 
-## 🛠️ Tech Stack
+## Project Structure
 
-- **Frontend**: React 18, Vite 6, Tailwind CSS 3, Recharts, Lucide Icons
-- **Backend**: Node.js, Express 4, Mongoose 8, JWT, Helmet, CORS
-- **Document Parsing**: `unpdf`, `pdf-parse`, `pdf2json`, `mammoth`
-- **AI Advisory**: Google Gemini (`@google/generative-ai`) with heuristic fallback engines
-- **Reporting**: PDFKit
+```text
+ResumeIQ/
+├── client/                     # Frontend React application
+│   ├── src/
+│   │   ├── components/         # Reusable UI & analysis modals
+│   │   ├── pages/              # Dashboard, Analyze, Analysis, Jobs, Resumes
+│   │   ├── services/           # Axios API client
+│   │   └── utils/              # Client helpers
+│   └── vite.config.js
+├── server/                     # Backend Node.js / Express API
+│   ├── src/
+│   │   ├── config/             # Database connection & memory fallback
+│   │   ├── controllers/        # Route controllers (Analysis, Resume, Job, Auth)
+│   │   ├── models/             # Mongoose schemas
+│   │   ├── routes/             # REST endpoints
+│   │   ├── services/           # Parsing, scoring, reporting, and advisory
+│   │   └── utils/              # Skill dictionary & text normalizer
+│   └── tests/                  # Automated test suites
+├── screenshots/                # Application preview images
+└── README.md
+```
 
 ---
 
-## 📄 License
+## Author
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+**Vinay Krishna**
+- GitHub: [@VinayKrishna-7](https://github.com/VinayKrishna-7)
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

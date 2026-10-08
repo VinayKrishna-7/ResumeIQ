@@ -4,7 +4,7 @@ const path = require('path');
 const testFiles = [
   'normalizer.test.js',
   'scoring.test.js',
-  'deepFix.test.js',
+  'parser.test.js',
   'integration.test.js'
 ];
 

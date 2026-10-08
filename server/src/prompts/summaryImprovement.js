@@ -1,6 +1,5 @@
 /**
- * Prompt for Professional Summary Optimizer.
- * Adheres to Section 28 anti-fabrication standards.
+ * Generates tailored, concise professional summaries aligned with target job specifications.
  */
 
 const buildSummaryImprovementPrompt = (originalSummary, candidateSkills = [], jobTitle = '', jobDescription = '') => {

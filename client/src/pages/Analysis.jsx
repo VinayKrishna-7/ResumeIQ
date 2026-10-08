@@ -168,7 +168,7 @@ const Analysis = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header Actions Bar (Section 13) */}
+      {/* Top Header Actions Bar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between no-print">
         <div className="flex items-center gap-3">
           <button
@@ -274,7 +274,7 @@ const Analysis = () => {
         </div>
       )}
 
-      {/* Hero Score Showcase Card (Sections 14-16) */}
+      {/* Hero Score Showcase Card */}
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#243044] dark:bg-[#111827] sm:p-7">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
           {/* Main ATS Match Score Ring */}
@@ -293,7 +293,7 @@ const Analysis = () => {
               }
             />
             <p className="mt-2.5 text-[11px] text-slate-400 dark:text-[#94A3B8] text-center max-w-[220px]">
-              Deterministic multi-factor compatibility index
+              Multi-factor ATS compatibility index
             </p>
           </div>
 
@@ -309,7 +309,7 @@ const Analysis = () => {
               }
             />
             <p className="mt-2.5 text-[11px] text-slate-400 dark:text-[#94A3B8] text-center max-w-[190px]">
-              Independent structural clarity & readability
+              Structural clarity and formatting quality
             </p>
           </div>
 
@@ -348,12 +348,12 @@ const Analysis = () => {
           </div>
         </div>
 
-        {/* Expandable "Why this score?" Cards (Section 15) */}
+        {/* Expandable "Why this score?" Cards */}
         {showScoreBreakdown && analysis.explanations && (
           <div className="mt-4 pt-4 border-t border-slate-100 dark:border-[#243044] space-y-3">
             <h4 className="text-xs font-bold font-display uppercase tracking-wider text-slate-500 dark:text-[#94A3B8] flex items-center gap-1.5">
               <Sliders className="h-3.5 w-3.5" />
-              <span>Transparent Scoring Rubric & Deterministic Rationale</span>
+              <span>Scoring Breakdown & Evaluation Rationale</span>
             </h4>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {analysis.explanations.skills && (
@@ -540,7 +540,7 @@ const Analysis = () => {
                   <span>Top Prioritized Recommendations</span>
                 </h3>
                 <p className="text-[11px] text-slate-400 dark:text-[#94A3B8] mt-0.5">
-                  Anti-hallucination grounded improvements from your uploaded resume.
+                  Actionable recommendations tailored specifically to your resume.
                 </p>
               </div>
               <button

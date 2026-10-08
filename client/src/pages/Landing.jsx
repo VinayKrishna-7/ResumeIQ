@@ -75,7 +75,7 @@ const Landing = () => {
           {/* Small Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50/90 px-3.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-[#4F46E5] dark:border-indigo-900/60 dark:bg-[#1E1B4B] dark:text-[#818CF8]">
             <Sparkles className="h-3 w-3" />
-            <span>AI-POWERED RESUME INTELLIGENCE</span>
+            <span>RESUME INTELLIGENCE & ATS SCORING</span>
           </div>
 
           {/* Main Heading */}
@@ -85,7 +85,7 @@ const Landing = () => {
 
           {/* Supporting Copy */}
           <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-[#475569] dark:text-[#CBD5E1] leading-relaxed font-normal">
-            ResumeIQ analyzes your resume against a target role using deterministic scoring and evidence-grounded AI recommendations.
+            ResumeIQ evaluates your resume against target job requirements, calculates calibrated match scores, and provides tailored improvements.
           </p>
 
           {/* CTAs */}
@@ -119,11 +119,11 @@ const Landing = () => {
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs font-medium text-[#64748B] dark:text-[#94A3B8]">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#34D399]" />
-              <span>Deterministic ATS Scoring</span>
+              <span>Calibrated ATS Scoring</span>
             </div>
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#34D399]" />
-              <span>Grounded Evidence (Zero Fabrication)</span>
+              <span>Targeted Recommendations</span>
             </div>
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#34D399]" />
@@ -320,10 +320,10 @@ const Landing = () => {
                 <Sparkles className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#0F172A] dark:text-[#F8FAFC]">
-                Grounded AI Advice
+                Actionable Recommendations
               </h3>
               <p className="mt-2 text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                Every suggestion quotes verbatim candidate bullets. Generates Google-style Action + Context + Impact rewrites without fabricating metric numbers.
+                Every suggestion references your specific experience. Provides Action + Context + Impact rewrites to help you quantify your achievements.
               </p>
             </div>
           </div>

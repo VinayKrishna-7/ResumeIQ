@@ -1,7 +1,6 @@
 /**
- * Deep-Fix Verification Suite for ResumeIQ.
- * Tests negative collision prevention, two-stage structured parsing,
- * weighted scoring with data-driven explanations, and grounded evidence-based recommendations.
+ * Parser & Taxonomy Verification Suite.
+ * Validates collision prevention, structured parsing, weighted scoring, and bullet improvements.
  */
 
 const { extractSkillsFromText, normalizeSkill, getSkillCategory } = require('../src/utils/skillDictionary');
@@ -17,7 +16,7 @@ function assert(condition, message) {
 }
 
 console.log('====================================================');
-console.log('🧪 RUNNING DEEP-FIX TEST SUITE');
+console.log('🧪 RUNNING PARSER & TAXONOMY TEST SUITE');
 console.log('====================================================');
 
 // 1. NEGATIVE COLLISION & FALSE POSITIVE PREVENTION
@@ -159,8 +158,8 @@ assert(typeof fullScoring.explanations.keywords === 'string', 'Keywords explanat
 
 console.log('✅ Weighted scoring and data-driven explanations verified!');
 
-// 4. GROUNDED EVIDENCE-BASED RECOMMENDATIONS & ZERO FABRICATION
-console.log('\n--- 4. Evidence-Based Recommendations & Heuristic Grounding ---');
+// 4. EVIDENCE-BASED RECOMMENDATIONS & ACTION REWRITING
+console.log('\n--- 4. Targeted Recommendations & Bullet Optimization ---');
 
 const heuristicAnalysis = aiProvider.generateHeuristicAnalysis(
   { parsedData: parsedResume },
@@ -200,5 +199,5 @@ assert(improvedWithMetric.improvedBullet.includes('reducing churn by 18%'), 'Sho
 assert(!improvedWithMetric.improvedBullet.includes('[INSERT METRIC'), 'Should not have placeholder when user supplied metric');
 
 console.log('\n====================================================');
-console.log('🎉 ALL DEEP-FIX BENCHMARK TESTS PASSED WITH 100% ACCURACY!');
+console.log('✅ ALL PARSER & TAXONOMY TESTS PASSED SUCCESSFULLY!');
 console.log('====================================================');

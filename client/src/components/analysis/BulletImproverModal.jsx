@@ -90,7 +90,7 @@ const BulletImproverModal = ({ isOpen, onClose, initialBullet = '', roleContext 
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
-              Optional Verified Metric (Strict anti-hallucination)
+              Optional Metric or Outcome
             </label>
             <input
               type="text"
@@ -100,7 +100,7 @@ const BulletImproverModal = ({ isOpen, onClose, initialBullet = '', roleContext 
               className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white py-2 px-3 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden dark:border-[#243044] dark:bg-[#172033] dark:text-[#F8FAFC]"
             />
             <p className="mt-1 text-[11px] text-slate-400 dark:text-[#94A3B8]">
-              ResumeIQ will never invent numbers. Supply your real metric above to weave it in smoothly.
+              Provide your real metric or outcome to integrate it into the rewritten bullet.
             </p>
           </div>
 
@@ -113,7 +113,7 @@ const BulletImproverModal = ({ isOpen, onClose, initialBullet = '', roleContext 
               {loading ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Rewriting with Grounded AI...</span>
+                  <span>Improving bullet point...</span>
                 </>
               ) : (
                 <>
