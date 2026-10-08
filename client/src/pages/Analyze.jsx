@@ -12,7 +12,8 @@ import {
   FileText,
   Check,
   Building2,
-  ChevronDown
+  ChevronDown,
+  X
 } from 'lucide-react';
 
 const Analyze = () => {
@@ -296,7 +297,14 @@ const Analyze = () => {
                 <span className="text-xs text-[#64748B] dark:text-[#94A3B8]">Or pick existing:</span>
                 <select
                   value={selectedResumeId}
-                  onChange={(e) => setSelectedResumeId(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value === '__upload_new__') {
+                      setSelectedResumeId('');
+                      fileInputRef.current?.click();
+                    } else {
+                      setSelectedResumeId(e.target.value);
+                    }
+                  }}
                   className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] py-1 px-2.5 text-xs font-medium text-[#0F172A] dark:border-[#243044] dark:bg-[#172033] dark:text-[#F8FAFC] focus:outline-none"
                 >
                   {resumes.map((r) => (
@@ -304,20 +312,35 @@ const Analyze = () => {
                       {r.name}
                     </option>
                   ))}
+                  <option value="__upload_new__">+ Upload new file...</option>
                 </select>
               </div>
             )}
           </div>
 
+          {/* Hidden persistent file input - always mounted in DOM */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.docx,.doc"
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                handleFileUpload(e.target.files[0]);
+              }
+              e.target.value = '';
+            }}
+            className="hidden"
+          />
+
           {/* Upload Dropzone */}
           {selectedResume ? (
-            <div className="rounded-xl border border-indigo-100 bg-[#EEF2FF]/60 p-4 dark:border-indigo-900/50 dark:bg-[#1E1B4B]/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#6366F1] text-white">
+            <div className="rounded-xl border border-indigo-100 bg-[#EEF2FF]/60 p-4 dark:border-indigo-900/50 dark:bg-[#1E1B4B]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#6366F1] text-white">
                   <FileText className="h-5 w-5" />
                 </div>
-                <div>
-                  <p className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC] truncate">
                     {selectedResume.name}
                   </p>
                   <p className="text-[11px] text-[#4F46E5] dark:text-[#818CF8] flex items-center gap-1 mt-0.5">
@@ -327,13 +350,50 @@ const Analyze = () => {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-xs font-semibold text-[#6366F1] hover:text-[#4F46E5] dark:text-[#818CF8] transition-colors"
-              >
-                Upload different file
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {resumes.length > 1 && (
+                  <select
+                    value={selectedResumeId}
+                    onChange={(e) => setSelectedResumeId(e.target.value)}
+                    className="rounded-lg border border-[#E2E8F0] bg-white py-1.5 px-2 text-xs font-medium text-[#0F172A] dark:border-[#243044] dark:bg-[#172033] dark:text-[#F8FAFC] focus:outline-none"
+                    title="Switch to another saved resume"
+                  >
+                    {resumes.map((r) => (
+                      <option key={r._id} value={r._id}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingResume}
+                  className="flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#6366F1] hover:bg-indigo-50 hover:text-[#4F46E5] dark:border-indigo-800 dark:bg-[#172033] dark:text-[#818CF8] dark:hover:bg-indigo-950/50 transition-colors cursor-pointer"
+                >
+                  {uploadingResume ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud className="h-3.5 w-3.5" />
+                      <span>Upload different file</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedResumeId('')}
+                  title="Remove selection & choose or upload another"
+                  className="rounded-lg p-1.5 text-[#64748B] hover:bg-white/80 dark:text-[#94A3B8] dark:hover:bg-[#243044] transition-colors cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           ) : (
             <div
@@ -348,14 +408,6 @@ const Analyze = () => {
                   : 'border-[#E2E8F0] hover:border-indigo-300 hover:bg-[#F8FAFC] dark:border-[#243044] dark:hover:bg-[#172033]/40'
               }`}
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.docx,.doc"
-                onChange={(e) => handleFileUpload(e.target.files?.[0])}
-                className="hidden"
-              />
-
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1] dark:bg-[#1E1B4B] dark:text-[#818CF8] mb-3">
                 {uploadingResume ? (
                   <Loader2 className="h-6 w-6 animate-spin" />
