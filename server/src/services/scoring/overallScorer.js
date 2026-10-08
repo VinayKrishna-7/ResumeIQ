@@ -33,12 +33,13 @@ const calculateEducationScore = (educationEntries = [], jobEducationRequirements
     };
   }
 
-  // Check degree keywords (e.g. bachelor, master, cs, engineering)
-  const allEduText = educationEntries.map((e) => `${e.degree} ${e.field}`).join(' ').toLowerCase();
+  // Check degree keywords (e.g. bachelor, master, b.tech, b.e., cs, engineering)
+  const allEduText = educationEntries.map((e) => `${e.degree || ''} ${e.field || ''}`).join(' ').toLowerCase();
   let matched = false;
 
+  const degreeKeywords = ['bachelor', 'master', 'b.s.', 'bs', 'b.tech', 'btech', 'b.e.', 'be', 'm.s.', 'ms', 'm.tech', 'mtech', 'phd', 'doctorate', 'degree', 'diploma'];
   jobEducationRequirements.forEach((req) => {
-    if (allEduText.includes('bachelor') || allEduText.includes('master') || allEduText.includes('b.s.')) {
+    if (degreeKeywords.some((dk) => allEduText.includes(dk))) {
       matched = true;
     }
   });

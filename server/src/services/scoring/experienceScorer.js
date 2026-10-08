@@ -79,7 +79,7 @@ const calculateExperienceScore = (experiences = [], requiredYears = 0) => {
     const end = exp.current ? currentYear : (endMatch ? parseInt(endMatch[1], 10) : null);
 
     if (start && end && end >= start) {
-      totalYears += (end - start);
+      totalYears += Math.max(1, end - start);
     } else {
       totalYears += 1; // Default 1 year per listed role if dates are approximate
     }

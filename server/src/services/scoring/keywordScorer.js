@@ -22,7 +22,10 @@ const calculateKeywordScore = (resumeText = '', jobKeywords = []) => {
 
   jobKeywords.forEach((keyword) => {
     const kwLower = keyword.toLowerCase();
-    const regex = new RegExp(`\\b${kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    const escaped = kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const startBoundary = /^[a-zA-Z0-9]/.test(kwLower) ? '(?:^|[^a-zA-Z0-9])' : '(?:^|\\s)';
+    const endBoundary = /[a-zA-Z0-9]$/.test(kwLower) ? '(?=[^a-zA-Z0-9]|$)' : '(?=[\\s,;.!?:()\\/\\[\\]]|$|\\b)';
+    const regex = new RegExp(`${startBoundary}${escaped}${endBoundary}`, 'gi');
     const matches = lowerText.match(regex);
 
     if (matches && matches.length > 0) {
