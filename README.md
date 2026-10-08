@@ -54,8 +54,6 @@ cd server && npm run dev
 cd client && npm run dev
 ```
 
-Open **[http://localhost:5173](http://localhost:5173)** in your browser.
-
 ## Tests
 
 Run the test suite:
@@ -65,4 +63,4 @@ cd server && npm test
 
 ## License
 
-MIT © [Vinay Krishna](https://github.com/VinayKrishna-7)
+MIT
