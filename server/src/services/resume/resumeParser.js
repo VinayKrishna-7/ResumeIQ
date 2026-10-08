@@ -240,9 +240,16 @@ const parseExperienceEntries = (lines) => {
         bullets: []
       };
     } else if (currentJob) {
-      const cleanBullet = line.replace(/^[•\-*]\s*/, '').trim();
-      if (cleanBullet) {
-        currentJob.bullets.push(cleanBullet);
+      if (isBullet) {
+        const cleanBullet = line.replace(/^[•\-*]\s*/, '').trim();
+        if (cleanBullet) {
+          currentJob.bullets.push(cleanBullet);
+        }
+      } else if (currentJob.bullets.length > 0) {
+        // Append wrapped line to previous bullet
+        currentJob.bullets[currentJob.bullets.length - 1] += ' ' + line.trim();
+      } else {
+        currentJob.bullets.push(line.trim());
       }
     }
   }
@@ -294,18 +301,35 @@ const parseEducationEntries = (lines) => {
 };
 
 /**
- * Stage 2 Helper: Parse projects block.
+ * Stage 2 Helper: Parse projects block with continuation handling.
  */
 const parseProjectEntries = (lines) => {
   if (!lines || lines.length === 0) return [];
   const entries = [];
   let current = null;
 
+  const isContinuation = (line) => {
+    if (/^[a-z]/.test(line)) return true;
+    if (/^(?:and|with|for|in|to|of|by|using|or|from|via|generation|deployment|analytics|feedback|export|access|latency|performance)\b/i.test(line)) return true;
+    if (/[.,;]$/.test(line) && !line.includes('|') && !line.includes(' - ') && !line.includes('—')) return true;
+    return false;
+  };
+
+  const isProjectHeader = (line, cur) => {
+    const isBullet = line.startsWith('•') || line.startsWith('-') || line.startsWith('*');
+    if (isBullet) return false;
+    if (line.includes('|') || line.includes(' - ') || line.includes('—')) return true;
+    if (cur && cur.bullets.length > 0 && isContinuation(line)) return false;
+    return !cur || /^[A-Z0-9]/.test(line);
+  };
+
   for (const line of lines) {
     const isBullet = line.startsWith('•') || line.startsWith('-') || line.startsWith('*');
 
-    if (!isBullet && line.length < 80) {
-      if (current) entries.push(current);
+    if (isProjectHeader(line, current)) {
+      if (current && (current.title || current.bullets.length > 0)) {
+        entries.push(current);
+      }
 
       const links = extractLinks(line);
       const techs = extractSkillsFromText(line);
@@ -318,20 +342,36 @@ const parseProjectEntries = (lines) => {
         link: links[0] || ''
       };
     } else if (current) {
-      const cleanBullet = line.replace(/^[•\-*]\s*/, '').trim();
-      if (cleanBullet) {
-        current.bullets.push(cleanBullet);
-        const bulletTechs = extractSkillsFromText(cleanBullet);
-        bulletTechs.forEach((t) => {
+      if (isBullet) {
+        const cleanBullet = line.replace(/^[•\-*]\s*/, '').trim();
+        if (cleanBullet) {
+          current.bullets.push(cleanBullet);
+          const bulletTechs = extractSkillsFromText(cleanBullet);
+          bulletTechs.forEach((t) => {
+            if (!current.technologies.includes(t)) {
+              current.technologies.push(t);
+            }
+          });
+        }
+      } else if (current.bullets.length > 0) {
+        // Append wrapped line to previous bullet point
+        current.bullets[current.bullets.length - 1] += ' ' + line.trim();
+        const lineTechs = extractSkillsFromText(line);
+        lineTechs.forEach((t) => {
           if (!current.technologies.includes(t)) {
             current.technologies.push(t);
           }
         });
+      } else {
+        current.bullets.push(line.trim());
       }
     }
   }
 
-  if (current) entries.push(current);
+  if (current && (current.title || current.bullets.length > 0)) {
+    entries.push(current);
+  }
+
   return entries;
 };
 
@@ -353,13 +393,30 @@ const parseResume = (text, defaultName = '') => {
   const personal = extractPersonalInfo(sectionBlocks.header, text, defaultName);
   const summary = sectionBlocks.summary.join(' ').trim();
 
-  // Skills Extraction: Merge explicit section items with verified dictionary matches
-  const explicitSkillsText = sectionBlocks.skills.join('\n');
-  const explicitSkills = explicitSkillsText
-    .split(/[,•|\n;]/)
-    .map((s) => s.trim())
-    .filter((s) => s.length >= 2 && s.length <= 35)
-    .map((s) => normalizeSkill(s));
+  // Skills Extraction: Clean line tokens, strip prefixes and conjunctions
+  const explicitSkills = [];
+  sectionBlocks.skills.forEach((line) => {
+    let cleanLine = line;
+    if (cleanLine.includes(':') && !cleanLine.toLowerCase().startsWith('http')) {
+      cleanLine = cleanLine.split(':')[1].trim();
+    }
+    const tokens = cleanLine.split(/[,•|\n;]/);
+    tokens.forEach((t) => {
+      const cleaned = t.replace(/\s*\([^)]*\)/g, '').trim();
+      if (!cleaned || cleaned.length < 2 || cleaned.length > 40) return;
+
+      if (cleaned.includes(' & ') || cleaned.toLowerCase().includes(' and ')) {
+        const subSkills = extractSkillsFromText(cleaned);
+        if (subSkills.length > 0) {
+          subSkills.forEach((s) => explicitSkills.push(s));
+          return;
+        }
+      }
+
+      const canonical = normalizeSkill(cleaned);
+      if (canonical) explicitSkills.push(canonical);
+    });
+  });
 
   const allDetectedSkills = extractSkillsFromText(text);
   const skillsSet = new Set([...explicitSkills, ...allDetectedSkills]);

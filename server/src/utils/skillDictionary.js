@@ -152,7 +152,7 @@ const SKILL_TAXONOMY = {
   'react': {
     canonical: 'React',
     category: 'Frontend',
-    aliases: ['reactjs', 'react.js', 'react js', 'react native'],
+    aliases: ['reactjs', 'react.js', 'react js'],
     collisionGuard: (text, idx) => {
       // Avoid matching "reaction" or "reactive programming" unless React is isolated
       const windowAfter = text.slice(idx, idx + 10).toLowerCase();
@@ -567,7 +567,171 @@ const SKILL_TAXONOMY = {
   'leadership': {
     canonical: 'Leadership',
     category: 'Soft Skills',
-    aliases: ['team lead', 'mentoring', 'cross-functional leadership', 'stakeholder management'],
+    aliases: ['team lead', 'cross-functional leadership', 'stakeholder management'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== CORE COMPUTER SCIENCE =====================
+  'data structures': {
+    canonical: 'Data Structures',
+    category: 'Core CS',
+    aliases: ['data structure', 'dsa', 'data structures & algorithms', 'data structures and algorithms'],
+    collisionGuard: (text, idx) => true
+  },
+  'algorithms': {
+    canonical: 'Algorithms',
+    category: 'Core CS',
+    aliases: ['algorithm', 'algorithmic problem solving', 'algorithms and data structures', 'algorithms & data structures'],
+    collisionGuard: (text, idx) => true
+  },
+  'object-oriented programming': {
+    canonical: 'Object-Oriented Programming',
+    category: 'Core CS',
+    aliases: ['oop', 'oops', 'object oriented programming', 'object-oriented'],
+    collisionGuard: (text, idx) => true
+  },
+  'problem solving': {
+    canonical: 'Problem Solving',
+    category: 'Core CS',
+    aliases: ['problem-solving', 'analytical problem solving'],
+    collisionGuard: (text, idx) => true
+  },
+  'database management': {
+    canonical: 'Database Management',
+    category: 'Databases',
+    aliases: ['dbms', 'rdbms', 'database management systems'],
+    collisionGuard: (text, idx) => true
+  },
+  'computer science': {
+    canonical: 'Computer Science',
+    category: 'Core CS',
+    aliases: ['cs', 'cse', 'computer science and engineering'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== MOBILE & FRAMEWORKS =====================
+  'react native': {
+    canonical: 'React Native',
+    category: 'Mobile',
+    aliases: ['reactnative', 'react-native'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== BACKEND, APIS & ARCHITECTURE =====================
+  'rest apis': {
+    canonical: 'REST APIs',
+    category: 'Backend',
+    aliases: ['restful apis', 'rest api', 'restful api', 'rest apis', 'rest services'],
+    collisionGuard: (text, idx) => true
+  },
+  'api design': {
+    canonical: 'API Design',
+    category: 'Backend',
+    aliases: ['api development', 'web apis', 'apis'],
+    collisionGuard: (text, idx) => true
+  },
+  'authentication': {
+    canonical: 'Authentication',
+    category: 'Backend',
+    aliases: ['auth', 'jwt', 'oauth', 'api key authentication', 'oauth2', 'authorization'],
+    collisionGuard: (text, idx) => true
+  },
+  'rate limiting': {
+    canonical: 'Rate Limiting',
+    category: 'Backend',
+    aliases: ['rate limiter', 'api rate limiting', 'throttling'],
+    collisionGuard: (text, idx) => true
+  },
+  'caching': {
+    canonical: 'Caching',
+    category: 'Backend',
+    aliases: ['cache', 'redis caching', 'in-memory caching'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== ENGINEERING PRACTICES =====================
+  'clean code': {
+    canonical: 'Clean Code',
+    category: 'Engineering Practices',
+    aliases: ['code quality', 'readable code', 'maintainable code', 'clean, readable, maintainable code'],
+    collisionGuard: (text, idx) => true
+  },
+  'debugging': {
+    canonical: 'Debugging',
+    category: 'Engineering Practices',
+    aliases: ['troubleshooting', 'code debugging', 'bug fixing'],
+    collisionGuard: (text, idx) => true
+  },
+  'software engineering': {
+    canonical: 'Software Engineering',
+    category: 'Engineering Practices',
+    aliases: ['software development', 'swe', 'software design', 'programming'],
+    collisionGuard: (text, idx) => true
+  },
+  'documentation': {
+    canonical: 'Documentation',
+    category: 'Engineering Practices',
+    aliases: ['technical documentation', 'code documentation', 'documentation and design'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== FRONTEND TOOLS & BASICS =====================
+  'vite': {
+    canonical: 'Vite',
+    category: 'Frontend',
+    aliases: ['vitejs', 'vite.js'],
+    collisionGuard: (text, idx) => true
+  },
+  'html5': {
+    canonical: 'HTML5',
+    category: 'Frontend',
+    aliases: ['html'],
+    collisionGuard: (text, idx) => true
+  },
+  'css3': {
+    canonical: 'CSS3',
+    category: 'Frontend',
+    aliases: ['css'],
+    collisionGuard: (text, idx) => true
+  },
+  'tailwind css': {
+    canonical: 'Tailwind CSS',
+    category: 'Frontend',
+    aliases: ['tailwind', 'tailwindcss'],
+    collisionGuard: (text, idx) => true
+  },
+  'web development': {
+    canonical: 'Web Development',
+    category: 'Frontend',
+    aliases: ['full stack development', 'full-stack development', 'full stack', 'full-stack'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== SECURITY =====================
+  'cyber security': {
+    canonical: 'Cyber Security',
+    category: 'Security',
+    aliases: ['cybersecurity', 'information security', 'infosec', 'secure coding', 'application security', 'appsec'],
+    collisionGuard: (text, idx) => true
+  },
+
+  // ===================== SOFT SKILLS =====================
+  'collaboration': {
+    canonical: 'Collaboration',
+    category: 'Soft Skills',
+    aliases: ['collaboration skills', 'cross-functional collaboration', 'teamwork', 'collaborative'],
+    collisionGuard: (text, idx) => true
+  },
+  'time management': {
+    canonical: 'Time Management',
+    category: 'Soft Skills',
+    aliases: ['time management skills'],
+    collisionGuard: (text, idx) => true
+  },
+  'communication': {
+    canonical: 'Communication',
+    category: 'Soft Skills',
+    aliases: ['communication skills', 'written communication', 'verbal communication', 'fluent english'],
     collisionGuard: (text, idx) => true
   }
 };
@@ -592,20 +756,30 @@ Object.keys(SKILL_TAXONOMY).forEach((key) => {
 
 /**
  * Normalizes any skill representation or variant to its canonical name.
+ * Handles category prefixes (e.g. "Languages: Python" -> "Python") and
+ * parenthetical proficiency levels (e.g. "Java (Basic)" -> "Java").
  * @param {string} rawSkill
  * @returns {string} Canonical skill name or formatted string
  */
 const normalizeSkill = (rawSkill) => {
   if (!rawSkill || typeof rawSkill !== 'string') return '';
-  const cleaned = rawSkill.trim().toLowerCase();
+  let cleaned = rawSkill.trim();
 
-  if (ALIAS_TO_CANONICAL[cleaned]) {
-    return ALIAS_TO_CANONICAL[cleaned];
+  // Strip section prefix if present (e.g. "Languages: Python" -> "Python")
+  if (cleaned.includes(':') && !cleaned.toLowerCase().startsWith('http')) {
+    cleaned = cleaned.split(':')[1].trim();
+  }
+
+  // Strip parenthetical notes like (Basic), (Proficient), (Intermediate), (3 years)
+  cleaned = cleaned.replace(/\s*\([^)]*\)/g, '').trim();
+
+  const lower = cleaned.toLowerCase();
+  if (ALIAS_TO_CANONICAL[lower]) {
+    return ALIAS_TO_CANONICAL[lower];
   }
 
   // If not in predefined dictionary, return clean title-cased token
-  return rawSkill
-    .trim()
+  return cleaned
     .split(' ')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');

@@ -1,7 +1,8 @@
 const STRONG_ACTION_VERBS = new Set([
   'architected', 'spearheaded', 'engineered', 'implemented', 'designed', 'orchestrated',
   'optimized', 'refactored', 'developed', 'deployed', 'automated', 'streamlined',
-  'accelerated', 'established', 'integrated', 'built', 'authored', 'managed', 'led'
+  'accelerated', 'established', 'integrated', 'built', 'authored', 'managed', 'led',
+  'configured', 'containerized', 'maintained', 'resolved', 'tested', 'conducted', 'created'
 ]);
 
 const WEAK_VERBS = new Set([
@@ -21,7 +22,7 @@ const evaluateBullet = (bullet) => {
 
   const isStrongVerb = STRONG_ACTION_VERBS.has(firstWord);
   const isWeakVerb = WEAK_VERBS.has(firstWord) || clean.toLowerCase().startsWith('responsible for');
-  const hasMetric = /\b\d+(?:%|\+?k|\+?x|\+?ms|min|sec|hrs?|\$)\b|\b(?:increased|decreased|reduced|improved|boosted|grew)\s+by\s+\d+/i.test(clean);
+  const hasMetric = /\b\d+(?:%|\+?k|\+?x|\+?ms|min|sec|hrs?|\$)\b|\b(?:increased|decreased|reduced|improved|boosted|grew)\s+by\s+\d+|\b\d+\+?\s*(?:users|clients|customers|requests|transactions|records|queries|endpoints)\b/i.test(clean);
   const isGoodLength = clean.length >= 45 && clean.length <= 250;
 
   let quality = 60;
@@ -108,8 +109,14 @@ const calculateExperienceScore = (experiences = [], requiredYears = 0) => {
       gaps.push(`Target role requests ${requiredYears}+ years experience; resume demonstrates ~${totalYears} years.`);
     }
   } else {
-    yearsScore = 90;
-    strengths.push(`Solid professional background with ${experiences.length} distinct roles.`);
+    // Dynamic scaling when no minimum years required (internships, junior roles, open seniority)
+    if (totalYears >= 5) yearsScore = 95;
+    else if (totalYears >= 3) yearsScore = 90;
+    else if (totalYears >= 2) yearsScore = 85;
+    else if (totalYears >= 1) yearsScore = 80;
+    else if (experiences.length > 0) yearsScore = 75;
+    else yearsScore = 45;
+    strengths.push(`Demonstrates ~${totalYears} year(s) of practical experience across ${experiences.length} distinct role(s).`);
   }
 
   // Combine years alignment (50%) and bullet quality (50%)

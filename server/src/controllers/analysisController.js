@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const { runDeterministicScoring } = require('../services/scoring/overallScorer');
 const aiProvider = require('../services/ai/aiProvider');
 const { parseJobDescription } = require('../services/job/jobParser');
+const { parseResume } = require('../services/resume/resumeParser');
 const { generatePdfReport } = require('../services/report/pdfReportGenerator');
 
 // @desc    Run full analysis on a resume and job
@@ -40,6 +41,12 @@ const createAnalysis = async (req, res, next) => {
       });
     }
 
+    // Refresh resume parsedData with the latest parser taxonomy
+    if (resume.normalizedText || resume.extractedText) {
+      resume.parsedData = parseResume(resume.normalizedText || resume.extractedText, resume.name);
+      await resume.save();
+    }
+
     let job;
     if (jobId) {
       job = await Job.findById(jobId);
@@ -56,6 +63,11 @@ const createAnalysis = async (req, res, next) => {
           message: 'Forbidden: You do not own this job',
           code: 'FORBIDDEN'
         });
+      }
+      // Refresh job parsedData with the latest parser taxonomy
+      if (job.description) {
+        job.parsedData = parseJobDescription(job.description);
+        await job.save();
       }
     } else if (targetJobDescription && targetJobDescription.trim().length > 0) {
       // Auto-save pasted job description (Section 16)
@@ -263,6 +275,16 @@ const compareResumes = async (req, res, next) => {
         message: 'One or more documents not found',
         code: 'NOT_FOUND'
       });
+    }
+
+    if (resume1.normalizedText || resume1.extractedText) {
+      resume1.parsedData = parseResume(resume1.normalizedText || resume1.extractedText, resume1.name);
+    }
+    if (resume2.normalizedText || resume2.extractedText) {
+      resume2.parsedData = parseResume(resume2.normalizedText || resume2.extractedText, resume2.name);
+    }
+    if (job.description) {
+      job.parsedData = parseJobDescription(job.description);
     }
 
     const score1 = runDeterministicScoring(resume1, job);

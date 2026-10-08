@@ -31,22 +31,27 @@ const parseJobDescription = (rawDescription) => {
   }
 
   // 2. Identify Section Blocks
-  const reqPattern = /^(?:minimum\s+qualifications|basic\s+qualifications|must\s+haves?|required\s+skills|requirements|what\s+you\s+need|who\s+you\s+are|what\s+we're\s+looking\s+for|core\s+qualifications|qualifications)\b/i;
-  const prefPattern = /^(?:preferred\s+qualifications|nice\s+to\s+haves?|bonus\s+points?|bonus\s+qualifications|preferred\s+skills|preferred|desired\s+qualifications|pluses|nice\s+to\s+have)\b/i;
+  const reqPattern = /^(?:technical\s+requirements|must[\s-]have\s+skills?|must[\s-]haves?|minimum\s+qualifications|basic\s+qualifications|required\s+skills?|requirements?|what\s+you(?:'ll|\s+will)?\s+need|who\s+you\s+are|what\s+we(?:'re|\s+are)\s+looking\s+for|core\s+qualifications|essential\s+skills?|qualifications?|key\s+requirements)\b/i;
+  const prefPattern = /^(?:what\s+we(?:\s+would)?\s+consider\s+as\s+added\s+value|added\s+value|added\s+advantage|skills\s+and\s+capabilities\s+we\s+believe\s+are\s+highly\s+relevant|preferred\s+qualifications|preferred\s+skills?|preferred|nice\s+to\s+haves?|nice\s+to\s+have|bonus\s+points?|bonus\s+qualifications?|desired\s+qualifications?|pluses|good\s+to\s+have)\b/i;
   const respPattern = /^(?:responsibilities|what\s+you'll\s+do|role\s+responsibilities|day\s+to\s+day|duties|what\s+you\s+will\s+deliver)\b/i;
+  const companyPattern = /^(?:about\s+(?:us|the\s+company|[a-z0-9]+)|who\s+we\s+are|company\s+overview|our\s+mission|what\s+are\s+we\s+solving|some\s+of\s+the\s+enhanced\s+benefits|benefits|perks|programme\s+details|program\s+details|what\s+does\s+an\s+[a-z0-9\s]+\s+mean\s+to\s+us|atlas\s+values)\b/i;
 
   let currentBlock = 'general';
   const blocks = {
     general: [],
     required: [],
     preferred: [],
-    responsibilities: []
+    responsibilities: [],
+    companyInfo: []
   };
 
   for (const line of lines) {
     const cleanHeader = line.replace(/[:\-—•#*]+$/, '').trim();
 
-    if (prefPattern.test(cleanHeader)) {
+    if (companyPattern.test(cleanHeader)) {
+      currentBlock = 'companyInfo';
+      continue;
+    } else if (prefPattern.test(cleanHeader)) {
       currentBlock = 'preferred';
       continue;
     } else if (reqPattern.test(cleanHeader)) {
@@ -64,28 +69,43 @@ const parseJobDescription = (rawDescription) => {
   const allSkills = extractSkillsFromText(text);
   const requiredText = blocks.required.join('\n');
   const preferredText = blocks.preferred.join('\n');
+  const respText = blocks.responsibilities.join('\n');
 
   let requiredSkills = extractSkillsFromText(requiredText);
   let preferredSkills = extractSkillsFromText(preferredText);
+  const respSkills = extractSkillsFromText(respText);
 
-  // If no explicit required block was segmented, deduce from general
-  if (requiredSkills.length === 0 && preferredSkills.length === 0) {
-    requiredSkills = allSkills;
-  } else {
-    // Ensure no overlap: If a skill is in preferred, keep it preferred
-    requiredSkills = requiredSkills.filter((s) => !preferredSkills.includes(s));
-
-    // Any skills mentioned in responsibilities or general (not in preferred) belong in required
-    allSkills.forEach((s) => {
+  // If explicit required or preferred sections exist:
+  if (requiredSkills.length > 0 || preferredSkills.length > 0) {
+    // Technical skills mentioned in responsibilities qualify as required
+    respSkills.forEach((s) => {
       if (!requiredSkills.includes(s) && !preferredSkills.includes(s)) {
         requiredSkills.push(s);
       }
     });
+
+    // Ensure strict separation between required and preferred
+    requiredSkills = requiredSkills.filter((s) => !preferredSkills.includes(s));
+  } else {
+    // If no explicit section headers, deduce skills from non-companyInfo text
+    const candidateText = [...blocks.general, ...blocks.responsibilities].join('\n');
+    requiredSkills = extractSkillsFromText(candidateText.length > 50 ? candidateText : text);
   }
 
   // 4. Extract Technical & Architectural Keywords
   const domainKeywordBank = [
+    'REST APIs',
     'RESTful APIs',
+    'Data Structures',
+    'Algorithms',
+    'Clean Code',
+    'Code Quality',
+    'Software Engineering',
+    'System Design',
+    'Object-Oriented Programming',
+    'Problem Solving',
+    'Debugging',
+    'Documentation',
     'Microservices',
     'CI/CD',
     'Agile',
@@ -98,7 +118,6 @@ const parseJobDescription = (rawDescription) => {
     'Security',
     'Unit Testing',
     'Integration Testing',
-    'System Design',
     'Cross-functional',
     'High Availability',
     'Automation',
@@ -109,7 +128,10 @@ const parseJobDescription = (rawDescription) => {
     'Database Indexing',
     'Observability',
     'Data Pipelines',
-    'Design Patterns'
+    'Design Patterns',
+    'Authentication',
+    'Rate Limiting',
+    'Caching'
   ];
 
   const keywords = [];
@@ -122,8 +144,8 @@ const parseJobDescription = (rawDescription) => {
     }
   });
 
-  // Include extracted skills as searchable keywords
-  allSkills.forEach((s) => {
+  // Include extracted job skills as searchable keywords
+  [...requiredSkills, ...preferredSkills].forEach((s) => {
     if (!keywords.includes(s)) {
       keywords.push(s);
     }
